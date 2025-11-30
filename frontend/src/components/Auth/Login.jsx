@@ -27,18 +27,20 @@ const Login = () => {
           withCredentials: true,
         }
       );
+
       toast.success(data.message);
       setEmail("");
       setPassword("");
       setRole("");
       setIsAuthorized(true);
     } catch (error) {
-      toast.error(error.response.data.message);
+      console.log("Login Error:", error);
+      toast.error(error.response?.data?.message || "Login failed!");
     }
   };
 
-  if(isAuthorized){
-    return <Navigate to={'/'}/>
+  if (isAuthorized) {
+    return <Navigate to={"/"} />;
   }
 
   return (
@@ -49,6 +51,7 @@ const Login = () => {
             <img src="/JobZeelogo.png" alt="logo" />
             <h3>Login to your account</h3>
           </div>
+
           <form>
             <div className="inputTag">
               <label>Login As</label>
@@ -61,6 +64,7 @@ const Login = () => {
                 <FaRegUser />
               </div>
             </div>
+
             <div className="inputTag">
               <label>Email Address</label>
               <div>
@@ -73,6 +77,7 @@ const Login = () => {
                 <MdOutlineMailOutline />
               </div>
             </div>
+
             <div className="inputTag">
               <label>Password</label>
               <div>
@@ -85,12 +90,15 @@ const Login = () => {
                 <RiLock2Fill />
               </div>
             </div>
+
             <button type="submit" onClick={handleLogin}>
               Login
             </button>
+
             <Link to={"/register"}>Register Now</Link>
           </form>
         </div>
+
         <div className="banner">
           <img src="/login.png" alt="login" />
         </div>
