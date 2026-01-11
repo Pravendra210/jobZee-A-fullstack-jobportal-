@@ -1,29 +1,36 @@
 import { config } from "dotenv";
-config({ path: "./config/config.env" }); // LOAD FIRST
+config({ path: "./config/config.env" }); // LOAD ENV FIRST
 
 import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import fileUpload from "express-fileupload";
+
 import { dbConnection } from "./database/dbConnection.js";
 import jobRouter from "./routes/jobRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import applicationRouter from "./routes/applicationRoutes.js";
-import cors from "cors";
 import { errorMiddleware } from "./middlewares/error.js";
-import cookieParser from "cookie-parser";
-import fileUpload from "express-fileupload";
 
 const app = express();
 
-
-
-// 🔥 FIXED CORS
+/* =======================
+   ✅ CORS (FINAL FIX)
+======================= */
 app.use(
     cors({
-        origin: [process.env.FRONTEND_URL], // << FIXED
-        methods: ["GET", "POST", "DELETE", "PUT"],
+        origin: [
+            "http://localhost:5173", // local frontend
+            process.env.FRONTEND_URL, // vercel frontend
+        ],
+        methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     })
 );
 
+/* =======================
+   MIDDLEWARES
+======================= */
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -35,15 +42,21 @@ app.use(
     })
 );
 
-// ROUTES
+/* =======================
+   ROUTES
+======================= */
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/job", jobRouter);
 app.use("/api/v1/application", applicationRouter);
 
-// DB Connect
+/* =======================
+   DATABASE
+======================= */
 dbConnection();
 
-// ERROR MIDDLEWARE
+/* =======================
+   ERROR HANDLER
+======================= */
 app.use(errorMiddleware);
 
 export default app;
